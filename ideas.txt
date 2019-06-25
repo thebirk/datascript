@@ -1,0 +1,108 @@
+# Function block
+
+{
+	/tp @a ~ ~1 ~
+}
+
+# Becomes execute and a new mcfunction file
+
+# Execute block
+
+as @e {
+	/tp ~ ~-1 ~
+}
+
+if entity @s[tag=SomeTag] {
+
+}
+
+# generates           '/execute as @e run function namespace:func_0_ln2'
+# and the function -> func_0_ln2.mcfunction -> tp ~ ~-1 ~
+
+
+positioned as @e[tag=locator] and align xyz {
+	# write function here
+}
+
+# Compiles to standalone.mcfunction
+func standalone {
+
+}
+
+# @load is a compiler intrinsic that adds the function too the #minecraft:load tag
+func init @load {
+	
+}
+
+# @tick is a compiler intrinsic that adds the function too the #minecraft:tick tag
+func tick @tick {
+	
+}
+
+
+
+############
+
+target Entity @e {
+    x: Pos[0] double
+    y: Pos[1] double
+    z: Pos[2] double
+}
+
+target SpecialThing @Entity[tag=MySpecialTag] { }
+
+
+as @SpecialThing[score=100..] {
+    /say I won! You suck!
+}
+/execute as @e[tag=MySpecialTag, scores={score=100..}] run say I won! You suck!
+
+############
+
+
+
+## Simple toggle spectator example
+datapack (
+    # Name of the final folder
+    name = "PlayerSpectator",
+
+    # Description that will show up with /datapack list
+    description = "Allows all players to toggle spectator mode",
+
+    # Name of the namespace used by the datapack
+    namespace = "player_spectator",
+
+    # Where the generated datapack will be saved, usually inside .minecraft/saves/Your World/datapacks
+    path = "",
+)
+
+func init @load {
+	/scoreboard objectives add spectate trigger
+	/scoreboard players enable @a spectate
+	/scoreboard players set @a spectate 0
+
+	/scoreboard objectives add ps_spectating dummy
+	/scoreboard players set @a ps_spectating 0
+}
+
+func tick @tick {
+	/scoreboard players enable @a spectate
+
+	as @a[spectate=1.., ps_spectating=32*32] {
+		/gamemode spectator @s
+		/scoreboard players set @s ps_spectating 1
+		/scoreboard players set @s 0
+	}
+
+	# /scoreboard players set Global scratch0 set 32
+	# /scoreboard players set Global scratch1 set 32
+	# /scoreboard players operation Global scratch0 *= Global scratch1
+	# /execute if score Global scratch0 = @a[scores={spectate=1..}] ps_spectating as @a[scores={spectate=1..}] run function func_0_ln48
+
+
+	as @a[spectate=1.., ps_spectating=1] {
+		/gamemode survival @s
+		/scoreboard players set @s ps_spectating 0
+		/scoreboard players set @s 0
+	}
+}

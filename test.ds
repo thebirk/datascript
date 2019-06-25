@@ -1,0 +1,46 @@
+datapack (
+    name = "Ticker",
+    namespace = "ticker",
+    description = "It ticks",
+    path = "./",
+)
+
+func main @load {
+    /scoreboard objectives add SomeCounter dummy
+    /scoreboard players set @a SomeCounter 0
+    # To Be Implemented: @a.SomeCounter = 0
+
+    /scoreboard objectives add tickme trigger
+    /scoreboard players set @a tickme 0
+    /scoreboard players enable @a tickme
+}
+
+func tick @tick {
+    /scoreboard players add @a SomeCounter 1
+    # To Be Implemented: @a.SomeCounter += 1
+    # (<name>|<target selector>).<ident> (=|+=|-=|*=|/=|%=) <expr>
+
+    as @a[tag=TickMe, SomeCounter=20..] {
+        /tellraw @s {"text":"20 ticks has passed"}
+        /scoreboard players set @s SomeCounter 0
+        # To Be Implemented: @s.SomeCounter = 0
+    }
+
+    /scoreboard players enable @a tickme
+    as @a[tickme=1..] {
+        /tag @s add TickMe
+        /scoreboard players set @s tickme 0
+    }
+    as @a[tickme=1..,tag=TickMe] {
+        /tag @s remove TickMe
+        /scoreboard players set @s tickme 0
+    } else {
+        # Coule be implemented with /execute store success score Dummy Else_Test <.. rest of execute block>
+        # Would clash with users ability to store result
+        # Maybe just disallow using else and '/execute store' together?
+
+        # There is also the problem of recursion. What if we hit this same function again?
+
+        # 'else' would be easy to support for if/unless, just invert the operation for the 'else' block
+    }
+}

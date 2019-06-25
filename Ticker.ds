@@ -1,0 +1,66 @@
+datapack (
+    name = "Ticker",
+    namespace = "ticker",
+    description = "It ticks",
+    path = "./",
+)
+
+func main @load {
+    /scoreboard objectives add SomeCounter dummy "Some Counter"
+    /scoreboard players set @a SomeCounter 0
+}
+
+func tick @tick {
+    /scoreboard players add @a SomeCounter 1
+
+    as @a[SomeCounter=20..] {
+        /tellraw @s {"text":"20 ticks has passed"}
+        /scoreboard players set @s SomeCounter 0
+    }
+}
+
+# The above would generate the datapack below
+
+Ticker/
+  pack.mcmeta
+  data/
+    minecraft/
+      tags/
+        functions/
+          load.json
+          tick.json
+    ticker/
+      functions/
+        main.mcfunction
+        tick.mcfunction
+        execute0_ln16.mcfunction
+
+main.mcfunction:
+  scoreboard objectives add SomeCounter dummy
+  scoreboard players set @a SomeCounter 0
+
+tick.mcfunction
+  scoreboard players add @a SomeCounter 1
+  execute as @p[scores={SomeCounter=20..}] run function ticker:execute0_ln16
+
+execute0_ln15.mcfunction:
+  tellraw @s {"text":"20 ticks has passed"}
+  scoreboard players set @s SomeCounter 0
+
+pack.mcmeta:
+{
+	"pack": {
+		"description": "It ticks",
+		"pack_format": 4
+	}
+}
+
+load.json:
+{
+    values: ["ticker:main"]
+}
+
+tick.json:
+{
+    values: ["ticker:tick"]
+}
