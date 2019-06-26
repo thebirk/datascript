@@ -14,7 +14,7 @@
         <entry file="file://$PROJECT_DIR$/__main__.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="498">
-              <caret line="99" column="50" selection-start-line="99" selection-start-column="50" selection-end-line="99" selection-end-column="50" />
+              <caret line="99" column="46" selection-start-line="99" selection-start-column="46" selection-end-line="99" selection-end-column="46" />
               <folding>
                 <element signature="e#0#32#0" expanded="true" />
               </folding>
@@ -37,11 +37,20 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/generator.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="493">
-              <caret line="29" lean-forward="true" selection-start-line="29" selection-end-line="29" />
+            <state relative-caret-position="357">
+              <caret line="21" column="35" selection-start-line="21" selection-start-column="35" selection-end-line="21" selection-end-column="35" />
               <folding>
                 <element signature="e#0#21#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://C:/Program Files/Python37/Lib/pathlib.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="302">
+              <caret line="1243" column="8" selection-start-line="1243" selection-start-column="8" selection-end-line="1243" selection-end-column="8" />
             </state>
           </provider>
         </entry>
@@ -124,8 +133,8 @@
         <option value="$PROJECT_DIR$/../Ticker.ds" />
         <option value="$PROJECT_DIR$/parser.py" />
         <option value="$PROJECT_DIR$/checker.py" />
-        <option value="$PROJECT_DIR$/generator.py" />
         <option value="$PROJECT_DIR$/__main__.py" />
+        <option value="$PROJECT_DIR$/generator.py" />
       </list>
     </option>
   </component>
@@ -321,13 +330,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://C:/Program Files/Python37/Lib/pathlib.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="352">
-          <caret line="1349" column="11" selection-start-line="1346" selection-end-line="1349" selection-end-column="11" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/checker.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="187">
@@ -348,10 +350,17 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://C:/Program Files/Python37/Lib/pathlib.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="302">
+          <caret line="1243" column="8" selection-start-line="1243" selection-start-column="8" selection-end-line="1243" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/generator.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="493">
-          <caret line="29" lean-forward="true" selection-start-line="29" selection-end-line="29" />
+        <state relative-caret-position="357">
+          <caret line="21" column="35" selection-start-line="21" selection-start-column="35" selection-end-line="21" selection-end-column="35" />
           <folding>
             <element signature="e#0#21#0" expanded="true" />
           </folding>
@@ -361,7 +370,7 @@
     <entry file="file://$PROJECT_DIR$/__main__.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="498">
-          <caret line="99" column="50" selection-start-line="99" selection-start-column="50" selection-end-line="99" selection-end-column="50" />
+          <caret line="99" column="46" selection-start-line="99" selection-start-column="46" selection-end-line="99" selection-end-column="46" />
           <folding>
             <element signature="e#0#32#0" expanded="true" />
           </folding>

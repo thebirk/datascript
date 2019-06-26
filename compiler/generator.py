@@ -19,7 +19,7 @@ class Generator:
         self.filename = path.joinpath("{}.zip".format("Test"))
 
         if not path.exists():
-            path.mkdir()
+            path.mkdir(parents=True)
 
         self.zip = zipfile.ZipFile(self.filename, mode='w')
         self.zip.writestr("test.txt", "Hello world!")

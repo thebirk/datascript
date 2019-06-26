@@ -97,7 +97,7 @@ def main():
 #    checker = Checker(nodes)
 #    checker.check()
 
-    gen = Generator(nodes, "../datascript/test_dir", True)
+    gen = Generator(nodes, "./deep/nested/shit", True)
     gen.generate()
 
 #    lexer = Lexer(input_str)
