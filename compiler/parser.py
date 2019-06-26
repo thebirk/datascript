@@ -276,9 +276,10 @@ class NodeTargetSelector(Node):
 
 
 class NodeDatapack(Node):
-    def __init__(self, options):
+    def __init__(self, options, tok):
         super().__init__(NodeDatapack)
         self.options = options
+        self.tok = tok
 
 
 class NodeTargetName(Node):
@@ -367,7 +368,8 @@ class Parser:
     def is_ident(self, name):
         return self.current_token.kind == 'ident' and self.current_token.lexeme == name
 
-    def syntax_error(self, msg: str, token: Token):
+    @staticmethod
+    def syntax_error(msg: str, token: Token):
         # TODO: When we do file watch, live rebuild, just have this throw an Exception, easy fix
         stderr.write("{}({}:{}): Syntax Error: {}".format(token.filepath, token.line, token.column, msg))
         exit(1)
@@ -387,9 +389,10 @@ class Parser:
         return nodes
 
     def parse_datapack(self):
+        tok = self.current_token
+
         if self.current_token.kind != 'ident' and self.current_token.lexeme == 'datapack':
             raise Exception("Unreachable!")
-
         self.next_token()
 
         if self.current_token.kind != '(':
@@ -404,7 +407,7 @@ class Parser:
                 self.next_token()
                 break
             elif self.current_token.kind == 'ident':
-                name = self.current_token.lexeme
+                name = self.current_token
                 self.next_token()
 
                 if self.current_token.kind != '=':
@@ -422,7 +425,7 @@ class Parser:
                     self.next_token()
                     break
 
-                options[name] = value
+                options[name.lexeme] = (value, name)
             else:
                 self.syntax_error("Expected option or ')' while parsing 'datapack' options, got '{}'".format(self.current_token.lexeme), self.current_token)
 
@@ -430,7 +433,7 @@ class Parser:
                 self.syntax_error("Expected ',', got '{}'".format(self.current_token.lexeme), self.current_token)
             self.next_token()
 
-        return NodeDatapack(options)
+        return NodeDatapack(options, tok)
 
     def parse_function_block(self):
         # TODO: Store location of the first left brace, useful when generating mcfunctions

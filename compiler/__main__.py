@@ -1,5 +1,5 @@
 from .parser import Parser, Node
-#from .checker import Checker
+from .checker import Checker
 from .generator import Generator
 
 import beeprint
@@ -94,8 +94,8 @@ def main():
     for n in nodes:
         beeprint.pp(n, max_depth=10, indent=4)
 
-#    checker = Checker(nodes)
-#    checker.check()
+    checker = Checker(nodes)
+    checker.check()
 
     gen = Generator(nodes, "./deep/nested/shit", True)
     gen.generate()
