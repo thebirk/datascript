@@ -1,17 +1,28 @@
 from .parser import *
 from typing import List
 import zipfile
+import pathlib
 
 
 class Generator:
-    def __init__(self, nodes: List[Node], path, zipped):
+    def __init__(self, nodes: List[Node], in_path, zipped):
         self.nodes = nodes
-        self.path = path
         self.zipped = zipped
 
-        self.zip = zipfile.ZipFile(path, mode='w')
-        self.zip.writestr("data/ticker/functions/tick.mcfunction", "/say Tick\n")
-        self.zip.extractall(path='./Test/')
+        # Look into using io.BytesIO() for generating the ZipFile in memory
+        # And then either write it to file or extract to a dir
+        # To write the zipfile, .getvalue() on a BytesIO returns bytes
+
+        path = pathlib.Path(in_path)
+        if path.exists() and not path.is_dir():
+            stderr.write("Target path '{}' already exists and is not a directory\n".format(path))
+        self.filename = path.joinpath("{}.zip".format("Test"))
+
+        if not path.exists():
+            path.mkdir()
+
+        self.zip = zipfile.ZipFile(self.filename, mode='w')
+        self.zip.writestr("test.txt", "Hello world!")
         self.zip.close()
 
     def generate(self):

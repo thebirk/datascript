@@ -851,7 +851,7 @@ class Parser:
 
         name = self.current_token
         if self.current_token.kind != 'ident':
-            self.syntax_error("Expected identifier after 'func', got '{}'".format(name.lexeme), name)
+            self.syntax_error("Expected function name after 'func', got '{}'".format(name.lexeme), name)
         self.next_token()
 
         tags = []

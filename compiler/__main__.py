@@ -80,12 +80,13 @@ def parse_args():
     parser = argparse.ArgumentParser(prog='datascript')
     parser.add_argument('SOURCE', type=str, help="Source File")
     parser.add_argument('-w', '--watch', action='store_true', help="watch file for changes and recompile datapack")
+    parser.add_argument('--unzip', action='store_true', help="generates an unzipped directoru for the datapack, useful for debugging")
     args = parser.parse_args()
     return args
 
 
 def main():
-    # parse_args()
+    # args = parse_args()
 
     parser = Parser(input_str)
     nodes = parser.parse()
@@ -96,7 +97,7 @@ def main():
 #    checker = Checker(nodes)
 #    checker.check()
 
-    gen = Generator(nodes, "./Test.zip", True)
+    gen = Generator(nodes, "../datascript/test_dir", True)
     gen.generate()
 
 #    lexer = Lexer(input_str)
