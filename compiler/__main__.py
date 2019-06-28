@@ -80,7 +80,7 @@ def parse_args():
     parser = argparse.ArgumentParser(prog='datascript')
     parser.add_argument('SOURCE', type=str, help="Source File")
     parser.add_argument('-w', '--watch', action='store_true', help="watch file for changes and recompile datapack")
-    parser.add_argument('--unzip', action='store_true', help="generates an unzipped directoru for the datapack, useful for debugging")
+    parser.add_argument('--nozip', action='store_true', help="generates an unzipped directoru for the datapack, useful for debugging")
     args = parser.parse_args()
     return args
 

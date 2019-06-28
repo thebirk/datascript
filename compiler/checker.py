@@ -62,3 +62,9 @@ class Checker:
             else:
                 stderr.write("Unknown datapack option '{}'".format(opt))
                 exit(1)
+
+        if 'name' not in n.options:
+            self.checker_error("'datapack' option 'name' is missing", n.tok)
+
+        if 'namespace' not in n.options:
+            self.checker_error("'datapack' option 'namepsace' is missing", n.tok)
