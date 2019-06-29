@@ -1,12 +1,16 @@
 from .lexer import Lexer, Token
 from sys import stderr
+from .nbt import NBTParser, NBTParseError, NBTValidateError
 
-import nbt
+import typing
 
 
 class Node:
     def __init__(self, type):
         self.type = type
+
+    def generate(self, builder: typing.List):
+        raise Exception("{} did not implement generate()".format(self.__class__))
 
 
 class NodeFunc(Node):
@@ -15,9 +19,12 @@ class NodeFunc(Node):
 
 
 class NodeCommand(Node):
-    def __init__(self, command):
+    def __init__(self, command: str):
         super().__init__(NodeCommand)
         self.command = command
+
+    def generate(self, builder):
+        builder.append(self.command)
 
 
 class NodeFunction(Node):
@@ -31,6 +38,9 @@ class NodeFunction(Node):
 class ExecuteChain:
     def __init__(self):
         pass
+
+    def generate(self, builder: typing.List):
+        raise Exception("{} did not implement generate()".format(self.__class__))
 
 
 class ExecuteChainAs(ExecuteChain):
@@ -684,13 +694,13 @@ class Parser:
 
                     selectors.append(SelectorRotation(name[:1], invert, range))
                 elif name == 'nbt':
-                    nbtp = nbt.NBTParser(self)
+                    nbtp = NBTParser(self)
                     try:
                         node = nbtp.parse_compound()
-                    except nbt.NBTParseError as e:
+                    except NBTParseError as e:
                         # self.syntax_error("NBT Error: ")
                         pass
-                    except nbt.NBTValidateError as e:
+                    except NBTValidateError as e:
                         pass
 
                 else:

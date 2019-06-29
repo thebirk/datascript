@@ -1,4 +1,4 @@
-from .parser import Parser, Node
+from .parser import Parser
 from .checker import Checker
 from .generator import Generator
 
@@ -59,6 +59,7 @@ func tick @tick {
 # * Parse ranges
 # - Parse the rest of the selectors
 #    FIXME: Start parsing '~' and '^' for certain values. Have it be its own function, like 'parse_coord_value()'
+#     Actually is this needed?
 #  - scores
 #  - advancements
 #  - nbt
@@ -99,13 +100,6 @@ def main():
 
     gen = Generator(nodes, "./deep/nested/shit", True)
     gen.generate()
-
-#    lexer = Lexer(input_str)
-#    t = lexer.next_token()
-#
-#    while t is not None and t.kind != "eof":
-#        print(t)
-#        t = lexer.next_token()
 
 
 if __name__ == "__main__":

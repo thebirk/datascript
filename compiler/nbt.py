@@ -1,5 +1,4 @@
 from .lexer import Token, Lexer
-from .parser import Parser
 
 import typing
 
@@ -13,7 +12,7 @@ class NBTTag(typing.NamedTuple):
     value: NBTNode
 
 
-class NBTCompund(NBTNode):
+class NBTCompound(NBTNode):
     def __init__(self, tags: typing.List[NBTTag]):
         self.tags: typing.List[NBTTag] = tags
 
@@ -91,14 +90,47 @@ class NBTValidateError(Exception):
 
 
 class NBTParser:
-    def __init__(self, parser: Parser):
-        self.parser: Parser = parser
+    suffix_table = {
+        'b': NBTByte, 'B': NBTByte,
+        's': NBTShort, 'S': NBTShort,
+        'l': NBTLong, 'L': NBTLong,
+        'f': NBTFloat, 'F': NBTFloat,
+        'd': NBTDouble, 'D': NBTDouble,
+    }
+
+    def __init__(self, parser):
+        self.parser = parser
         self.lexer: Lexer = parser.lexer
 
     def parse_error(self, msg, tok: Token = None):
         if tok is None:
             tok = self.parser.current_token
         raise NBTParseError(tok.filepath, tok.line, tok.column, msg)
+
+    def parse_value(self):
+        # TODO: IDEA: Add the ability to set the lexer to accept doubles directly
+        #  Enable this once in __init__ then disable it when we are done
+        #  That way we get easier integer vs double parsing. Could also just
+        #  reimplement the parse double from Parser in here.
+        #  I dunno, implementing the double parsing is a bit of a hack
+        #  while supporting it in the lexer is pretty aight
+        tok = self.parser.current_token
+
+        if self.parser.current_token.kind == 'number':
+            raise Exception("incomplete")
+        elif self.parser.current_token.kind == '{':
+            return self.parse_compound()
+        elif self.parser.current_token.kind == 'string':
+            self.parser.next_token()
+            return NBTString(tok.lexeme)
+        elif self.parser.current_token.kind == '[':
+            return self.parse_list()
+        else:
+            self.parse_error("Unexpected '{}', expected NBT value".format(self.parser.current_token.lexeme))
+
+    def parse_list(self):
+        # Check if Byte, Int or Double Array
+        raise Exception("incomplete: list")
 
     def parse_compound(self):
         if self.parser.current_token != '{':
@@ -109,15 +141,30 @@ class NBTParser:
 
         # TODO: Compunds take multiple variables silly, do a while loop
 
-        name = self.parser.current_token
-        if name.kind != 'ident':
-            self.parse_error("Expected tag name, got '{}'".format(self.parser.current_token.lexeme))
-        self.parser.next_token()
+        # '{,}' -> is invalid
+        # While a dangling comma after at least one valid key, value pair is allowed
+        is_dangling_allowed = False
 
-        if self.parser.current_token.kind != ':':
-            self.parse_error("Expected ':', got '{}'".format(self.parser.current_token.lexeme))
-        self.parser.next_token()
+        while True:
+            if self.parser.current_token.kind == '}':
+                break
+            elif self.parser.current_token.kind == ',':
+                if is_dangling_allowed:
+                    self.parser.next_token()
+                else:
+                    self.parse_error("Unexpected '{}'".format(self.parser.current_token.lexeme))
+            else:
+                if not is_dangling_allowed:
+                    is_dangling_allowed = True
+                name = self.parser.current_token
+                if name.kind != 'ident':
+                    self.parse_error("Expected tag name, got '{}'".format(self.parser.current_token.lexeme))
+                self.parser.next_token()
 
-        value = self.parse_value()
+                if self.parser.current_token.kind != ':':
+                    self.parse_error("Expected ':', got '{}'".format(self.parser.current_token.lexeme))
+                self.parser.next_token()
 
-        # return NodeCompound(tags)
+                value = self.parse_value()
+
+        return NBTCompound(tags)
