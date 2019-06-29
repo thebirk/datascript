@@ -1,6 +1,8 @@
 from .lexer import Lexer, Token
 from sys import stderr
 
+import nbt
+
 
 class Node:
     def __init__(self, type):
@@ -681,6 +683,16 @@ class Parser:
                     range = self.parse_range()
 
                     selectors.append(SelectorRotation(name[:1], invert, range))
+                elif name == 'nbt':
+                    nbtp = nbt.NBTParser(self)
+                    try:
+                        node = nbtp.parse_compound()
+                    except nbt.NBTParseError as e:
+                        # self.syntax_error("NBT Error: ")
+                        pass
+                    except nbt.NBTValidateError as e:
+                        pass
+
                 else:
                     # We assume its supposed to be a score
                     range = self.parse_range()
