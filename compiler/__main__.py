@@ -33,7 +33,7 @@ func tick @tick {
         /tp @s ~ ~ ~
     }
     
-    as @e[nbt={id:"minecraft:armor_stand", NoGravity:1b, CustomName:"Fancy Stand"}] {
+    as @e[nbt={id:"minecraft:armor_stand", NoGravity:1b, CustomName:"Fancy Stand", list:[{id:"minecraft:stick", count:23},{id:"minecraft:dirt", count: 4}]}] {
         /say Hello I am stand
     }
     
@@ -66,8 +66,9 @@ func tick @tick {
 #     Actually is this needed?
 #  - scores
 #  - advancements
-#  - nbt
 # - Parse SNBT, validate?
+#  - Missing quote escaping in lexer
+#  - Lists/Arrays
 # - Parse the rest of the execute block expression
 #   - 'if'
 #   - 'unless'

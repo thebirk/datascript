@@ -19,6 +19,7 @@ class NBTCompound(NBTNode):
 
 class NBTByte(NBTNode):
     def __init__(self, value: int):
+        # TODO: Make a better error for this, assertions arent very user friendly
         assert value >= -128 and value <= 127
         self.value = value
 
@@ -63,17 +64,17 @@ class NBTList(NBTNode):
 
 
 class NBTByteArray(NBTNode):
-    def __init__(self, array: typing.List[int]):
+    def __init__(self, array: typing.List[NBTNode]):
         self.array = array
 
 
 class NBTIntArray(NBTNode):
-    def __init__(self, array: typing.List[int]):
+    def __init__(self, array: typing.List[NBTNode]):
         self.array = array
 
 
 class NBTLongArray(NBTNode):
-    def __init__(self, array: typing.List[int]):
+    def __init__(self, array: typing.List[NBTNode]):
         self.array = array
 
 
@@ -129,6 +130,7 @@ class NBTParser:
         elif self.parser.current_token.kind == '{':
             return self.parse_compound()
         elif self.parser.current_token.kind == 'string':
+            # TODO: We need to support quote escaping in the lexer, otherwise raw JSON text wont work
             self.parser.next_token()
             return NBTString(tok.lexeme)
         elif self.parser.current_token.kind == '[':
@@ -142,11 +144,73 @@ class NBTParser:
             self.parse_error("Expected list, got '{}'".format(self.parser.current_token.lexeme))
         self.parser.next_token()
 
-        values = []
+        is_array = False
+        array_type = None
 
-        # if self.parser.is_ident('B')
+        if self.parser.is_ident('B') or self.parser.is_ident('I') or self.parser.is_ident('L'):
+            array_type = self.parser.current_token.lexeme
+            self.parser.next_token()
 
-        raise Exception("incomplete: list")
+            if self.parser.current_token.kind != ';':
+                self.parse_error("Expected ';', got '{}'".format(self.parser.current_token.lexeme))
+            self.parser.next_token()
+
+            is_array = True
+
+        values: typing.List[typing.Tuple[NBTNode, Token]] = []
+
+        first_value = None
+
+        while True:
+            if self.parser.current_token.kind == ']':
+                self.parser.next_token()
+                break
+            else:
+                tok = self.parser.current_token
+                v = self.parse_value()
+                values.append((v, tok))
+
+                if first_value is None:
+                    first_value = v
+
+                if self.parser.current_token.kind == ']':
+                    self.parser.next_token()
+                    break
+
+            if self.parser.current_token.kind != ',':
+                self.parse_error("Expected ',', got '{}'".format(self.parser.current_token.lexeme))
+            self.parser.next_token()
+
+        if is_array:
+            # TODO: Make sure all value entries mathc the type
+            T = None
+            V = None
+            if array_type == 'B':
+                T = NBTByteArray
+                V = NBTByte
+            elif array_type == 'I':
+                T = NBTIntArray
+                V = NBTInt
+            elif array_type == 'L':
+                T = NBTLongArray
+                V = NBTLong
+            else:
+                raise Exception("Internal compiler error!")
+
+            for (v, tok) in values:
+                if not isinstance(v, V):
+                    # TODO: Prettyify the type name
+                    # TODO: Print what type of array this is 'byte array', 'int array', etc.
+                    self.parse_error("Unexpected value in array, '{}'".format(type(v)), tok=tok)
+
+            return T([e[0] for e in values])
+        else:
+            T = type(first_value)
+            for (v, tok) in values:
+                if not isinstance(v, T):
+                    self.parse_error("Invalid tag for list, a list can only contain a single type of tags", tok=tok)
+
+            return NBTList([e[0] for e in values], type(first_value))
 
     def parse_compound(self):
         if self.parser.current_token.kind != '{':

@@ -704,7 +704,7 @@ class Parser:
                     except NBTParseError as e:
                         self.syntax_error("NBT Error: {}".format(e.msg), self.current_token)
                     except NBTValidateError as e:
-                        pass
+                        raise Exception("incomplete")
 
                     # Disable float parsing in the lexer
                     self.lexer.parse_floats = False
