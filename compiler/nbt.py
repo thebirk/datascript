@@ -155,11 +155,8 @@ class NBTParser:
 
         tags = []
 
-        # TODO: Compunds take multiple variables silly, do a while loop
-
         # '{,}' -> is invalid
         # While a dangling comma after at least one valid key, value pair is allowed, '{id:"Test",}'
-        is_dangling_allowed = False
 
         while True:
             if self.parser.current_token.kind == '}':
@@ -188,8 +185,5 @@ class NBTParser:
             if self.parser.current_token.kind != ',':
                 self.parse_error("Expected ',', got '{}'".format(self.parser.current_token.lexeme))
             self.parser.next_token()
-
-        import beeprint
-        beeprint.pp(tags)
 
         return NBTCompound(tags)
