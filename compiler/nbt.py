@@ -133,6 +133,9 @@ class NBTParser:
             # TODO: We need to support quote escaping in the lexer, otherwise raw JSON text wont work
             self.parser.next_token()
             return NBTString(tok.lexeme)
+        elif self.parser.current_token.kind == 'ident':
+            self.parser.next_token()
+            return NBTString(tok.lexeme)
         elif self.parser.current_token.kind == '[':
             return self.parse_list()
         else:
@@ -182,9 +185,12 @@ class NBTParser:
             self.parser.next_token()
 
         if is_array:
-            # TODO: Make sure all value entries mathc the type
             T = None
             V = None
+
+            # Would be possible to allow all int values as long as
+            # they have a value lower than the type of the array
+
             if array_type == 'B':
                 T = NBTByteArray
                 V = NBTByte

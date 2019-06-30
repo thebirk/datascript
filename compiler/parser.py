@@ -9,7 +9,7 @@ class Node:
     def __init__(self, type):
         self.type = type
 
-    def generate(self, builder: typing.List):
+    def generate(self, builder: typing.List[str]):
         raise Exception("{} did not implement generate()".format(self.__class__))
 
 
@@ -25,6 +25,7 @@ class NodeCommand(Node):
 
     def generate(self, builder):
         builder.append(self.command)
+        builder.append('\n')
 
 
 class NodeFunction(Node):
@@ -536,7 +537,6 @@ class Parser:
     def parse_range(self):
         start = None
         end = None
-        # TODO: Support unary ops
 
         if self.current_token.kind == '..':
             self.next_token()

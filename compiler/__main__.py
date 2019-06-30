@@ -33,7 +33,9 @@ func tick @tick {
         /tp @s ~ ~ ~
     }
     
-    as @e[nbt={id:"minecraft:armor_stand", NoGravity:1b, CustomName:"Fancy Stand", list:[{id:"minecraft:stick", count:23},{id:"minecraft:dirt", count: 4}]}] {
+    as @e[nbt={Passengers:[{id:"minecraft:creeper",NoAI:1b,PersistenceRequired:1b,Glowing:1,Health:12,Attributes:[{Name:"generic.maxHealth",Base:12},{Name:"generic.movementSpeed",Base:1f}],Silent:1,ExplosionRadius:8}]}] {}
+    
+    as @e[nbt={a:b, id:"minecraft:armor_stand", NoGravity:1b, CustomName:"Fancy Stand", list:[{id:"minecraft:stick", count:23},{id:"minecraft:dirt", count: 4}]}] {
         /say Hello I am stand
     }
     
