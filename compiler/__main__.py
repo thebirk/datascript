@@ -86,6 +86,38 @@ def parse_args():
     return args
 
 
+def watch_test():
+    import time
+    import pathlib
+    from watchdog.events import FileModifiedEvent, PatternMatchingEventHandler
+    from watchdog.observers import Observer
+
+    class Handler(PatternMatchingEventHandler):
+        def on_modified(self, event: FileModifiedEvent):
+            print("'{}' was modified".format(event.src_path))
+
+    filepath = pathlib.Path("./Ticker.ds")
+    filedir = filepath.parent
+
+    print("File Name:", filepath.name)
+    print("Pattern: {}".format(filepath.absolute().as_posix()))
+    print("Dir: {}".format(filedir.absolute().as_posix()))
+
+    handler = Handler(patterns=[filepath.absolute().as_posix()], ignore_directories=True)
+    observer = Observer()
+    observer.schedule(handler, path=filedir.absolute().as_posix(), recursive=False)
+    observer.start()
+
+    try:
+        while True:
+            time.sleep(1)
+    except KeyboardInterrupt:
+        observer.join()
+    observer.join()
+
+    exit(0)
+
+
 def main():
     # args = parse_args()
 
