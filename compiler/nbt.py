@@ -108,16 +108,24 @@ class NBTParser:
         raise NBTParseError(tok.filepath, tok.line, tok.column, msg)
 
     def parse_value(self):
-        # TODO: IDEA: Add the ability to set the lexer to accept doubles directly
-        #  Enable this once in __init__ then disable it when we are done
-        #  That way we get easier integer vs double parsing. Could also just
-        #  reimplement the parse double from Parser in here.
-        #  I dunno, implementing the double parsing is a bit of a hack
-        #  while supporting it in the lexer is pretty aight
         tok = self.parser.current_token
 
         if self.parser.current_token.kind == 'number':
-            raise Exception("incomplete")
+            self.parser.next_token()
+
+            suffix = NBTParser.suffix_table.get(self.parser.current_token.lexeme, None)
+            if suffix is not None:
+                self.parser.next_token()
+                return suffix(int(tok.lexeme))
+
+            return NBTInt(int(tok.lexeme))
+        if self.parser.current_token.kind == 'float':
+            self.parser.next_token()
+
+            if self.parser.is_ident('f') or self.parser.is_ident('F'):
+                return NBTFloat(float(tok.lexeme))
+            else:
+                return NBTDouble(float(tok.lexeme))
         elif self.parser.current_token.kind == '{':
             return self.parse_compound()
         elif self.parser.current_token.kind == 'string':
@@ -130,10 +138,18 @@ class NBTParser:
 
     def parse_list(self):
         # Check if Byte, Int or Double Array
+        if self.parser.current_token.kind != '[':
+            self.parse_error("Expected list, got '{}'".format(self.parser.current_token.lexeme))
+        self.parser.next_token()
+
+        values = []
+
+        # if self.parser.is_ident('B')
+
         raise Exception("incomplete: list")
 
     def parse_compound(self):
-        if self.parser.current_token != '{':
+        if self.parser.current_token.kind != '{':
             self.parse_error("Expected compund tag, got '{}'".format(self.parser.current_token.lexeme))
         self.parser.next_token()
 
@@ -142,20 +158,14 @@ class NBTParser:
         # TODO: Compunds take multiple variables silly, do a while loop
 
         # '{,}' -> is invalid
-        # While a dangling comma after at least one valid key, value pair is allowed
+        # While a dangling comma after at least one valid key, value pair is allowed, '{id:"Test",}'
         is_dangling_allowed = False
 
         while True:
             if self.parser.current_token.kind == '}':
+                self.parser.next_token()
                 break
-            elif self.parser.current_token.kind == ',':
-                if is_dangling_allowed:
-                    self.parser.next_token()
-                else:
-                    self.parse_error("Unexpected '{}'".format(self.parser.current_token.lexeme))
-            else:
-                if not is_dangling_allowed:
-                    is_dangling_allowed = True
+            elif self.parser.current_token.kind == 'ident':
                 name = self.parser.current_token
                 if name.kind != 'ident':
                     self.parse_error("Expected tag name, got '{}'".format(self.parser.current_token.lexeme))
@@ -166,5 +176,20 @@ class NBTParser:
                 self.parser.next_token()
 
                 value = self.parse_value()
+
+                tags.append(NBTTag(name.lexeme, value))
+
+                if self.parser.current_token.kind == '}':
+                    self.parser.next_token()
+                    break
+            else:
+                self.parse_error("Unexpected '{}'".format(self.parser.current_token.lexeme))
+
+            if self.parser.current_token.kind != ',':
+                self.parse_error("Expected ',', got '{}'".format(self.parser.current_token.lexeme))
+            self.parser.next_token()
+
+        import beeprint
+        beeprint.pp(tags)
 
         return NBTCompound(tags)

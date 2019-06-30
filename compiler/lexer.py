@@ -23,6 +23,7 @@ class Lexer:
         self.column = 0  # Incremented to 1 by next_char on first run
         self.current_char = ''
         self.next_char()
+        self.parse_floats = False
 
     def next_char(self):
         self.input_offset = self.input_offset + 1
@@ -119,10 +120,21 @@ class Lexer:
             line = self.line
             column = self.column
 
-            while str.isdigit(self.current_char):
+            found_dot = False
+
+            while str.isdigit(self.current_char) or (self.parse_floats and self.current_char == '.'):
+                if self.parse_floats and self.current_char == '.':
+                    if found_dot:
+                        break
+                    else:
+                        found_dot = True
+                        self.next_char()
                 self.next_char()
 
-            return Token('number', self.input[start:self.input_offset], self.path, line, column)
+            if found_dot:
+                return Token('float', self.input[start:self.input_offset], self.path, line, column)
+            else:
+                return Token('number', self.input[start:self.input_offset], self.path, line, column)
         elif self.current_char == '':
             return Token('eof', 'eof', self.path, self.line, self.column)
         else:

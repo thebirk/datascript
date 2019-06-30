@@ -694,15 +694,20 @@ class Parser:
 
                     selectors.append(SelectorRotation(name[:1], invert, range))
                 elif name == 'nbt':
+                    # Enable float parsing in the lexer
+                    self.lexer.parse_floats = True
+
                     nbtp = NBTParser(self)
                     try:
                         node = nbtp.parse_compound()
+                        selectors.append(SelectorNBT(node))
                     except NBTParseError as e:
-                        # self.syntax_error("NBT Error: ")
-                        pass
+                        self.syntax_error("NBT Error: {}".format(e.msg), self.current_token)
                     except NBTValidateError as e:
                         pass
 
+                    # Disable float parsing in the lexer
+                    self.lexer.parse_floats = False
                 else:
                     # We assume its supposed to be a score
                     range = self.parse_range()

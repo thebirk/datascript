@@ -33,6 +33,10 @@ func tick @tick {
         /tp @s ~ ~ ~
     }
     
+    as @e[nbt={id:"minecraft:armor_stand", NoGravity:1b, CustomName:"Fancy Stand"}] {
+        /say Hello I am stand
+    }
+    
     align xz positioned as @a as @p {
         /say I am aligned
     }
@@ -92,7 +96,7 @@ def watch_test():
     from watchdog.events import FileModifiedEvent, PatternMatchingEventHandler
     from watchdog.observers import Observer
 
-    class Handler(PatternMatchingEventHandler):
+    class WatchHandler(PatternMatchingEventHandler):
         def on_modified(self, event: FileModifiedEvent):
             print("'{}' was modified".format(event.src_path))
 
@@ -103,7 +107,7 @@ def watch_test():
     print("Pattern: {}".format(filepath.absolute().as_posix()))
     print("Dir: {}".format(filedir.absolute().as_posix()))
 
-    handler = Handler(patterns=[filepath.absolute().as_posix()], ignore_directories=True)
+    handler = WatchHandler(patterns=[filepath.absolute().as_posix()], ignore_directories=True)
     observer = Observer()
     observer.schedule(handler, path=filedir.absolute().as_posix(), recursive=False)
     observer.start()
